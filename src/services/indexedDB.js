@@ -20,9 +20,16 @@ export const addTodoToDB = async (todo) => {
     return new Promise((resolve, reject) => {
         const transaction = db.transaction('todos', 'readwrite');
         const store = transaction.objectStore('todos');
-        const request = store.add(todo);
+        
+        // Ensure the todo has a unique identifier
+        const todoToStore = {
+            ...todo,
+            id: todo.id || todo.text // Use existing ID or generate from text
+        };
+        
+        const request = store.add(todoToStore);
 
-        request.onsuccess = () => resolve(true);
+        request.onsuccess = () => resolve(todoToStore);
         request.onerror = (event) => reject(event.target.error);
     });
 };
@@ -41,15 +48,16 @@ export const getTodosFromDB = async () => {
 };
 
 // Delete To-Do from IndexedDB
-export const deleteTodoFromDB = async (id) => {
+export const deleteTodoFromDB = async (todoId) => {
     const db = await openDB();
     return new Promise((resolve, reject) => {
         const transaction = db.transaction('todos', 'readwrite');
         const store = transaction.objectStore('todos');
-        const request = store.delete(id);
+        
+        const deleteRequest = store.delete(todoId); // Borra directamente por ID
 
-        request.onsuccess = () => resolve(true);
-        request.onerror = (event) => reject(event.target.error);
+        deleteRequest.onsuccess = () => resolve(true);
+        deleteRequest.onerror = () => reject(new Error('Todo not found'));
     });
 };
 
