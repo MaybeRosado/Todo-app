@@ -18,6 +18,11 @@ h1 {
   width: fit-content;
 }
 
+.padding-style{
+  padding: 6px;
+}
+
+
 .tab-container {
   overflow-x: auto;
 }
@@ -56,6 +61,7 @@ h1 {
 hr {
   opacity: 0.4;
 }
+
 
 .todo-item {
   display: flex;
