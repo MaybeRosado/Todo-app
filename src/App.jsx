@@ -51,6 +51,7 @@ const App = () => {
       setTodos([])
     }
   }, [user])
+  
   //Auth
   const handleLogin = async (email, password) => {
     try{

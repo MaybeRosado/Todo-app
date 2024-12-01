@@ -1,12 +1,19 @@
 const CACHE_NAME = 'todo-app-v1'
-const urlsToCache = ['/', '/index.html', '/manifest.json'];
+const URLS_TO_CACHE = [
+    '/',
+    '/index.html',
+    '/manifest.json',
+    '/list-svgrepo-com.svg',
+    '/service-worker.js',
+    '/index.css',
+];
 
 
 //Install service worker
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
-            return cache.addAll(urlsToCache);
+            return cache.addAll(URLS_TO_CACHE);
         })
     )
 });
