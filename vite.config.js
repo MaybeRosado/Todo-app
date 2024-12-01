@@ -3,8 +3,8 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
 const manifestForPlugIn = {
-  registerType: 'prompt', // Cambiado a autoUpdate para actualizaciones automáticas
-  includeAssets: ["favicon.ico", "apple-touc-icon.png", "masked-icon.png"], // Corrección de typo
+  registerType: 'prompt', 
+  includeAssets: ["favicon.ico", "apple-touc-icon.png", "masked-icon.png"], 
   manifest: {
     name: "To-Do App",
     short_name: "To-Do",
