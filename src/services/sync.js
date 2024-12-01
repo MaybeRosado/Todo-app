@@ -1,27 +1,38 @@
-import {deleteTodoFromDB} from './indexedDB'
-import {getTodosFromDB} from './indexedDB'
-import {addDoc, collection} from 'firebase/firestore';
+import { deleteTodoFromLocalStorage, updateTodoInLocalStorage, getTodosFromLocalStorage } from './localstorage'
+import { addDoc, collection } from 'firebase/firestore';
 import { db } from '../firebase';
 
 const syncTodos = async () => {
-    try{
-        const localTodos = await getTodosFromDB();
-        for(const todo of localTodos){
-            const docRef = await addDoc(collection(db, 'todos'), todo);
-            console.log('To-Do sync with Firebase');
+    try {
+        const localTodos = await getTodosFromLocalStorage();
 
-            //Delete todo dynx w indexedDB
-            await deleteTodoFromDB(todo.id);
+        for (const todo of localTodos) {
+            if (!todo.synced) {
+                // Subir el To-Do a Firebase
+                const docRef = await addDoc(collection(db, 'todos'), {
+                    text: todo.text,
+                    complete: todo.complete,
+                    userId: todo.userId
+                });
+
+                console.log('To-Do synced with Firebase');
+
+                // Actualizar el estado de "synced" en LocalStorage
+                await updateTodoInLocalStorage(todo.id, { id: docRef.id, synced: true });
+
+                // Eliminar el To-Do local después de la sincronización
+                await deleteTodoFromLocalStorage(todo.id);
+            }
         }
-    }catch(error){
+
+    } catch (error) {
         console.log('Error synchronizing the To-Dos:', error.message);
     }
 };
 
-//Listening the online event
 window.addEventListener('online', () => {
-    console.log('connection restored. Synchronizing data');
+    console.log('Connection restored. Synchronizing data...');
     syncTodos();
-})
+});
 
 export default syncTodos;

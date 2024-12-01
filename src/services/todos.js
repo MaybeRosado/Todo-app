@@ -1,8 +1,8 @@
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, where } from "firebase/firestore";
 import { db } from "../firebase";
-import { addTodoToDB, deleteTodoFromDB } from './indexedDB'
+import { addTodoToLocalStorage, deleteTodoFromLocalStorage } from './localstorage'
 
-// Add To-Do
+// Añadir To-Do
 export const addTodo = async (userId, newTodo) => {
     try {
         const todoData = {
@@ -10,11 +10,11 @@ export const addTodo = async (userId, newTodo) => {
             complete: false,
             userId: userId,
             synced: navigator.onLine,
-            id: Date.now().toString() // Add a unique ID
+            id: Date.now().toString()
         };
 
         if (!navigator.onLine) {
-            await addTodoToDB(todoData);
+            await addTodoToLocalStorage(todoData);
             console.log('To-Do saved locally');
             return todoData;
         }
@@ -26,58 +26,59 @@ export const addTodo = async (userId, newTodo) => {
         });
 
         const todoWithId = { ...todoData, id: docRef.id, synced: true };
-        await addTodoToDB(todoWithId);
-        
+        await addTodoToLocalStorage(todoWithId);
         return todoWithId;
     } catch (error) {
-        console.log('Error at adding a new To-Do:', error.message);
+        console.log('Error adding a new To-Do:', error.message);
         throw error;
     }
 };
 
-
+// Obtener todos los To-Do
 export const getTodos = async (userId) => {
-    try{
+    try {
         const q = query(collection(db, 'todos'), where('userId', '==', userId));
         const querySnapshot = await getDocs(q);
         const todos = [];
         querySnapshot.forEach((doc) => {
-            todos.push({id: doc.id, ...doc.data() });
+            todos.push({ id: doc.id, ...doc.data() });
         });
         return todos;
-    }catch (error) {
-        console.log('Error at getting the To-Dos:', error.message);
+    } catch (error) {
+        console.log('Error getting the To-Dos:', error.message);
         throw error;
     }
 };
 
-//Mark completed the To-Do's
+// Marcar To-Do como completado
 export const completeTodo = async (todoId) => {
-    try{
+    try {
         const todoRef = doc(db, 'todos', todoId);
-        await updateDoc(todoRef, {complete: true});
-
-    }catch (error) {
-        console.log('Error at completing the To-Do:', error.message);
-
+        await updateDoc(todoRef, { complete: true });
+    } catch (error) {
+        console.log('Error completing the To-Do:', error.message);
     }
 };
 
-// Delete To-Do
+// Eliminar To-Do
 export const deleteTodo = async (todoId) => {
     try {
         console.log('Deleting todo with ID:', todoId);
 
+        // Verificar si está online
         if (navigator.onLine) {
-            // For online todos with Firebase ID
-            if (todoId.length > 10) {  // Assuming Firebase IDs are longer
+            if (todoId.length > 10) {  // ID de Firebase
                 const todoRef = doc(db, 'todos', todoId);
                 await deleteDoc(todoRef);
+                console.log('Deleted from Firebase');
             }
+        } else {
+            console.log('Offline, skipping Firebase deletion');
         }
 
-        // Always try to delete from IndexedDB
-        await deleteTodoFromDB(todoId);
+        // Eliminar de LocalStorage
+        await deleteTodoFromLocalStorage(todoId);
+        console.log('Deleted from LocalStorage');
     } catch (error) {
         console.error('Error deleting todo:', error);
         throw error;

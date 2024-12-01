@@ -122,7 +122,7 @@ const App = () => {
   const handleDeleteTodo = async(todoId) => {
     try{
       await deleteTodo(todoId);
-      setTodos(todos.filter((todo) => todo.id !== todoId));
+      setTodos(prevTodos => prevTodos.filter(todo => todo.id !== todoId));
     }catch(error){
       console.log(error);
     }
