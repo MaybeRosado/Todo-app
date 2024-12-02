@@ -26,24 +26,6 @@ const manifestForPlugIn = {
         sizes: '180x180',
         type: 'image/png',
         purpose: 'apple touch icon',
-      },
-      {
-        src: "/icon-144x144.png",
-        sizes: "144x144",
-        type: "image/png",
-        purpose: "any"
-      },
-      {
-        src: "/icon-256x256.png",
-        sizes: "256x256",
-        type: "image/png",
-        purpose: "icon"
-      },
-      {
-        src: "/icon-384x384.png",
-        sizes: "384x384",
-        type: "image/png",
-        purpose: "any maskable"
       }
     ],
     theme_color: '#171717',
