@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
 const manifestForPlugIn = {
-  registerType: 'prompt', 
+  registerType: 'autoUpdate', 
   includeAssets: ["favicon.ico", "apple-touc-icon.png", "masked-icon.png"], 
   manifest: {
     name: "To-Do App",
@@ -28,19 +28,19 @@ const manifestForPlugIn = {
         purpose: 'apple touch icon',
       },
       {
-        src: "./icon-144x144.png",
+        src: "/icon-144x144.png",
         sizes: "144x144",
         type: "image/png",
         purpose: "any"
       },
       {
-        src: "./icon-256x256.png",
+        src: "/icon-256x256.png",
         sizes: "256x256",
         type: "image/png",
         purpose: "icon"
       },
       {
-        src: "./icon-384x384.png",
+        src: "/icon-384x384.png",
         sizes: "384x384",
         type: "image/png",
         purpose: "any maskable"
